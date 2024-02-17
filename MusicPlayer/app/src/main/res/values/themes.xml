@@ -1,0 +1,19 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme. -->
+    <style name="Base.Theme.MusicPlayer" parent="Theme.MaterialComponents.Light.DarkActionBar">
+        <item name="android:windowFullscreen">true</item>
+        <!-- Customize your light theme here. -->
+         <item name="colorPrimary">@color/teal_200</item>
+    </style>
+
+    <style name="Theme.MyApp" parent="Base.Theme.MusicPlayer">
+        <item name="android:windowBackground">@drawable/splash_screen</item>
+    </style>
+    <!-- Base application theme. -->
+    <style name="Base.Theme.MyApp"  parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="windowNoTitle">true</item>
+        <item name="android:windowFullscreen">true</item>
+        <!-- Customize your light theme here. -->
+        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+    </style>
+</resources>

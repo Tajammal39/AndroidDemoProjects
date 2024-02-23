@@ -1,19 +1,29 @@
 package com.example.musicplayer
 
-import android.media.MediaPlayer
+import android.annotation.SuppressLint
+import android.content.ComponentName
+import android.content.Intent
+import android.content.ServiceConnection
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import com.bumptech.glide.Glide
+import android.os.Handler
+import android.os.IBinder
+import android.os.Looper
+import android.util.Log
+import android.widget.SeekBar
 import com.example.musicplayer.databinding.ActivityPlayerBinding
 
-class PlayerActivity : AppCompatActivity() {
-    private lateinit var binding: ActivityPlayerBinding
-    private var songPosition: Int = 0
-    private var mediaPlayer: MediaPlayer? = null
-    private var isPlaying: Boolean = false
+class PlayerActivity : AppCompatActivity(), ServiceConnection {
+    private lateinit var runnable: Runnable
 
     companion object {
-        private lateinit var MusicListPA: ArrayList<MusicData>
+        var isPlaying: Boolean = false
+        var musicService: MusicService? = null
+        var songPosition: Int = 0
+        lateinit var MusicListPA: ArrayList<MusicData>
+
+        @SuppressLint("StaticFieldLeak")
+        lateinit var binding: ActivityPlayerBinding
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -21,10 +31,31 @@ class PlayerActivity : AppCompatActivity() {
         binding = ActivityPlayerBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        val intent = Intent(this, MusicService::class.java)
+        bindService(intent, this, BIND_AUTO_CREATE)
+        startService(intent)
+
         initializeLayout()
         binding.playPauseBtn.setOnClickListener {
             if (isPlaying) pauseMusic() else playMusic()
         }
+
+        binding.nextIcon.setOnClickListener {
+            preNextSong(true)
+        }
+        binding.previousIcon.setOnClickListener {
+            preNextSong(false)
+        }
+
+        binding.seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                if (fromUser) musicService!!.mediaPlayer!!.seekTo(progress)
+            }
+
+            override fun onStartTrackingTouch(seekBar: SeekBar?) = Unit
+
+            override fun onStopTrackingTouch(seekBar: SeekBar?) = Unit
+        })
     }
 
     private fun initializeLayout() {
@@ -33,48 +64,16 @@ class PlayerActivity : AppCompatActivity() {
         when (intent.getStringExtra("class")) {
             "MusicAdapter" -> {
                 MusicListPA = ArrayList(MainActivity.MusicListMA)
-                setLayout()
-                createMediaPlayer()
+                setLayout(this)
+            }
+
+            "MainActivity" -> {
+                MusicListPA = ArrayList(MainActivity.MusicListMA)
+                //randomly play song in shuffle screen
+                MusicListPA.shuffle()
+                setLayout(this)
             }
         }
-    }
-
-    private fun setLayout() {
-        Glide
-            .with(this)
-            .load(MusicListPA[songPosition].artUrl)
-            .centerCrop()
-            .placeholder(R.drawable.musical_player).centerCrop()
-            .into(binding.musicIcon)
-
-        binding.songTitle.text = MusicListPA[songPosition].title
-    }
-
-    private fun createMediaPlayer() {
-        try {
-            if (mediaPlayer == null) mediaPlayer = MediaPlayer()
-            mediaPlayer!!.reset()
-            mediaPlayer!!.setDataSource(MusicListPA[songPosition].path)
-            mediaPlayer!!.prepare()
-            mediaPlayer!!.start()
-            isPlaying = true
-            binding.playPauseBtn.setIconResource(R.drawable.ic_pause)
-        } catch (e: Exception) {
-            return
-        }
-    }
-
-
-    private fun playMusic() {
-        binding.playPauseBtn.setIconResource(R.drawable.ic_pause)
-        isPlaying = true
-        mediaPlayer!!.start()
-    }
-
-    private fun pauseMusic() {
-        binding.playPauseBtn.setIconResource(R.drawable.ic_play_arrow)
-        isPlaying = false
-        mediaPlayer!!.pause()
     }
 
     override fun onDestroy() {
@@ -83,12 +82,41 @@ class PlayerActivity : AppCompatActivity() {
     }
 
     private fun releaseMediaPlayer() {
-        mediaPlayer?.apply {
+        musicService!!.mediaPlayer?.apply {
             if (isPlaying) {
                 stop()
             }
             release()
         }
-        mediaPlayer = null
+        musicService!!.mediaPlayer = null
+    }
+
+    private fun preNextSong(increment: Boolean) {
+        Log.d("preNextSong1", "$increment")
+        setSongPosition(increment)
+        setLayout(this)
+        createMediaPlayer()
+    }
+
+    override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
+        val binder = service as MusicService.MyBinder
+        musicService = binder.currentService()
+        createMediaPlayer()
+        seekBarSetup()
+    }
+
+    override fun onServiceDisconnected(name: ComponentName?) {
+        musicService = null
+    }
+
+    private fun seekBarSetup() {
+        runnable = Runnable {
+            binding.startTv.text =
+                formatDuration(musicService!!.mediaPlayer!!.currentPosition.toLong())
+            binding.seekBar.progress =
+                musicService!!.mediaPlayer!!.currentPosition
+            Handler(Looper.getMainLooper()).postDelayed(runnable, 200)
+        }
+        Handler(Looper.getMainLooper()).postDelayed(runnable, 0)
     }
 }

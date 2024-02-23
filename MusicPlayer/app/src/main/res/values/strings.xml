@@ -5,4 +5,7 @@
     <string name="playlist_btn">Playlist</string>
    <string name="open">Open</string>
     <string name="close">Close</string>
+
+    <string name="channelName">Now Playing Song</string>
+    <string name="channelDescription">This is a important channel for showing song!!</string>
 </resources>

@@ -15,14 +15,13 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.example.musicplayer.databinding.ActivityMainBinding
 import java.io.File
-import java.net.URI
 import kotlin.collections.ArrayList
 import kotlin.system.exitProcess
 
 class MainActivity : AppCompatActivity() {
     private lateinit var viewBinding: ActivityMainBinding
     private lateinit var toggle: ActionBarDrawerToggle
-    private lateinit var musicRecycler: RecyclerView
+//    private lateinit var musicRecycler: RecyclerView
     private lateinit var musicAdapter: MusicAdapter
 
     companion object {
@@ -31,16 +30,22 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        requestRunTimePermission()
         viewBinding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(viewBinding.root)
 
         setupNavigationDrawer()
 
-        MusicListMA = getAllMusic()
+        // Check for runtime permissions and initialize layout if granted
+        if (requestRunTimePermission()) {
+            initializeLayout()
+        }
 
         viewBinding.shufflcon.setOnClickListener {
-            startActivity(Intent(this, PlayerActivity::class.java))
+            startActivity(
+                Intent(this, PlayerActivity::class.java).putExtra(
+                    "Index", 0
+                ).putExtra("class", "MainActivity")
+            )
         }
 
         viewBinding.favouriteIcon.setOnClickListener {
@@ -50,7 +55,11 @@ class MainActivity : AppCompatActivity() {
         viewBinding.playlistIcon.setOnClickListener {
             startActivity(Intent(this, PlaylistActivity::class.java))
         }
+    }
 
+
+    private fun initializeLayout() {
+        MusicListMA.addAll(getAllAudio())
         musicAdapter = MusicAdapter(this, MusicListMA)
         viewBinding.musicRv.adapter = musicAdapter
         viewBinding.textSong.text = "Total Songs : " + musicAdapter.itemCount
@@ -77,7 +86,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     //for requesting permission
-    private fun requestRunTimePermission() {
+    private fun requestRunTimePermission(): Boolean {
         // Check if the permission is not granted
         if (ContextCompat.checkSelfPermission(
                 this,
@@ -92,7 +101,9 @@ class MainActivity : AppCompatActivity() {
                 arrayOf(android.Manifest.permission.WRITE_EXTERNAL_STORAGE),
                 11
             )
+            return false
         }
+        return true
     }
 
     override fun onRequestPermissionsResult(
@@ -103,6 +114,7 @@ class MainActivity : AppCompatActivity() {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == 11) {
             if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+           initializeLayout()
                 Toast.makeText(this, "Permission Granted", Toast.LENGTH_SHORT).show()
             } else {
                 // Request the permission
@@ -111,6 +123,7 @@ class MainActivity : AppCompatActivity() {
                     arrayOf(android.Manifest.permission.WRITE_EXTERNAL_STORAGE),
                     11
                 )
+//                requestRunTimePermission()
             }
         }
     }
@@ -123,7 +136,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     @SuppressLint("Range")
-    private fun getAllMusic(): ArrayList<MusicData> {
+    private fun getAllAudio(): ArrayList<MusicData> {
         val tempList = ArrayList<MusicData>()
 
         val selection = MediaStore.Audio.Media.IS_MUSIC + "!= 0"
@@ -153,7 +166,8 @@ class MainActivity : AppCompatActivity() {
                 val album = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ALBUM))
                 val artist = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ARTIST))
                 val path = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.DATA))
-                val duration = cursor.getLong(cursor.getColumnIndex(MediaStore.Audio.Media.DURATION))
+                val duration =
+                    cursor.getLong(cursor.getColumnIndex(MediaStore.Audio.Media.DURATION))
                 val albumId = cursor.getLong(cursor.getColumnIndex(MediaStore.Audio.Media.ALBUM_ID))
                     .toString()
                 val uri = Uri.parse("content://media/external/audio/albumart")

@@ -9,6 +9,7 @@ import android.provider.MediaStore
 import android.view.MenuItem
 import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -21,7 +22,8 @@ import kotlin.system.exitProcess
 class MainActivity : AppCompatActivity() {
     private lateinit var viewBinding: ActivityMainBinding
     private lateinit var toggle: ActionBarDrawerToggle
-//    private lateinit var musicRecycler: RecyclerView
+
+    //private lateinit var musicRecycler: RecyclerView
     private lateinit var musicAdapter: MusicAdapter
 
     companion object {
@@ -57,6 +59,27 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+//        releaseMediaPlayer()
+
+        // Example code to check for null before accessing an object
+        if (PlayerActivity.musicService!!.mediaPlayer != null) {
+            releaseMediaPlayer()
+        }
+    }
+
+    private fun releaseMediaPlayer() {
+        PlayerActivity.musicService!!.mediaPlayer?.apply {
+            if (isPlaying) {
+                stop()
+            }
+            release()
+        }
+        PlayerActivity.musicService!!.mediaPlayer = null
+        PlayerActivity.musicService!!.stopForeground(true)
+    }
+
 
     private fun initializeLayout() {
         MusicListMA.addAll(getAllAudio())
@@ -78,7 +101,23 @@ class MainActivity : AppCompatActivity() {
                 R.id.navFeedback -> Toast.makeText(this, "Feedback", Toast.LENGTH_SHORT).show()
                 R.id.navSettings -> Toast.makeText(this, "Settings", Toast.LENGTH_SHORT).show()
                 R.id.navAbout -> Toast.makeText(this, "About", Toast.LENGTH_SHORT).show()
-                R.id.navExit -> exitProcess(1)
+                R.id.navExit -> {
+                    val builder = AlertDialog.Builder(this)
+                        .setTitle("Exit")
+                        .setMessage("Do You Want to close app?")
+                    //builder.setPositiveButton("OK", DialogInterface.OnClickListener(function = x))
+
+                    builder.setPositiveButton("Yes") { _, _ ->
+                        releaseMediaPlayer()
+                        finish()
+                    }
+
+                    builder.setNegativeButton("No") { dialog, _ ->
+                        dialog.dismiss()
+                    }
+                    builder.show()
+                }
+
             }
             true
         }
@@ -114,7 +153,7 @@ class MainActivity : AppCompatActivity() {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == 11) {
             if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-           initializeLayout()
+                initializeLayout()
                 Toast.makeText(this, "Permission Granted", Toast.LENGTH_SHORT).show()
             } else {
                 // Request the permission
@@ -123,7 +162,6 @@ class MainActivity : AppCompatActivity() {
                     arrayOf(android.Manifest.permission.WRITE_EXTERNAL_STORAGE),
                     11
                 )
-//                requestRunTimePermission()
             }
         }
     }
@@ -184,5 +222,6 @@ class MainActivity : AppCompatActivity() {
 
         return tempList
     }
+
 
 }

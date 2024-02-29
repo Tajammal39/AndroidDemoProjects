@@ -13,8 +13,6 @@ class MusicService : Service() {
     private var myBinder = MyBinder()
     var mediaPlayer: MediaPlayer? = null
     // help in code again and again execute
-
-
     override fun onBind(intent: Intent?): IBinder {
         return myBinder
     }

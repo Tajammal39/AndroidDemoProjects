@@ -18,7 +18,7 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <ImageButton
-            android:id="@+id/backIcon"
+            android:id="@+id/playerBackIcon"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:background="@android:color/transparent"
@@ -40,7 +40,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@id/favIcon"
             app:layout_constraintHorizontal_weight="4"
-            app:layout_constraintStart_toEndOf="@id/backIcon"
+            app:layout_constraintStart_toEndOf="@id/playerBackIcon"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.5" />
 

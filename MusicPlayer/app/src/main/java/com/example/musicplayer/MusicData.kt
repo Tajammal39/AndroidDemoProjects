@@ -1,13 +1,18 @@
 package com.example.musicplayer
-
 import android.content.Context
+import android.content.Intent
 import android.media.MediaMetadataRetriever
 import android.media.MediaPlayer
-import androidx.core.content.ContextCompat
+import android.net.Uri
+import android.os.Bundle
+import android.speech.RecognitionListener
+import android.speech.RecognizerIntent
+import android.speech.SpeechRecognizer
+import android.util.Log
 import com.bumptech.glide.Glide
+import java.util.Locale
 import java.util.concurrent.TimeUnit
 import kotlin.system.exitProcess
-
 data class MusicData(
     val id: String,
     val title: String,
@@ -42,6 +47,7 @@ fun getImageArt(path: String): ByteArray? {
 }
 
 fun setLayout(content: Context) {
+    PlayerActivity.fIndex = favouriteChecker(PlayerActivity.MusicListPA[PlayerActivity.songPosition].id)
     Glide
         .with(content)
         .load(PlayerActivity.MusicListPA[PlayerActivity.songPosition].artUrl)
@@ -51,6 +57,9 @@ fun setLayout(content: Context) {
     PlayerActivity.binding.songTitle.text =
         PlayerActivity.MusicListPA[PlayerActivity.songPosition].title
 
+    if (PlayerActivity.isFavourite)
+        PlayerActivity.binding.favIcon.setImageResource(R.drawable.ic_favorite)
+    else PlayerActivity.binding.favIcon.setImageResource(R.drawable.ic_favorite_border)
 }
 
 fun createMediaPlayer(musicData: MusicData) {
@@ -61,6 +70,7 @@ fun createMediaPlayer(musicData: MusicData) {
         PlayerActivity.musicService!!.mediaPlayer?.setDataSource(PlayerActivity.MusicListPA[PlayerActivity.songPosition].path)
         PlayerActivity.musicService!!.mediaPlayer?.prepare()
         PlayerActivity.musicService!!.mediaPlayer?.start()
+
         PlayerActivity.isPlaying = true
         PlayerActivity.binding.playPauseBtn.setIconResource(R.drawable.ic_pause)
         PlayerActivity.musicService!!.showNotification(R.drawable.ic_pause)
@@ -71,6 +81,7 @@ fun createMediaPlayer(musicData: MusicData) {
         PlayerActivity.binding.seekBar.progress = 0
         PlayerActivity.binding.seekBar.max = PlayerActivity.musicService!!.mediaPlayer!!.duration
         PlayerActivity.musicService!!.mediaPlayer!!.setOnCompletionListener(musicData)
+
     } catch (e: Exception) {
         return
     }
@@ -81,6 +92,7 @@ fun playMusic() {
     PlayerActivity.musicService!!.showNotification(R.drawable.ic_pause)
     PlayerActivity.isPlaying = true
     PlayerActivity.musicService!!.mediaPlayer?.start()
+    NowPlaying.binding.playPauseBtnNp.setIconResource(R.drawable.ic_pause)
 }
 
 fun pauseMusic() {
@@ -88,6 +100,7 @@ fun pauseMusic() {
     PlayerActivity.musicService!!.showNotification(R.drawable.ic_play_arrow)
     PlayerActivity.isPlaying = false
     PlayerActivity.musicService!!.mediaPlayer?.pause()
+    NowPlaying.binding.playPauseBtnNp.setIconResource(R.drawable.ic_play_arrow)
 }
 
 fun setSongPosition(increment: Boolean) {
@@ -103,9 +116,19 @@ fun setSongPosition(increment: Boolean) {
     }
 }
 
-fun exitApplication(){
+fun exitApplication() {
     PlayerActivity.musicService!!.stopForeground(true)
     PlayerActivity.musicService!!.mediaPlayer!!.release()
     PlayerActivity.musicService = null
     exitProcess(1)
+}
+fun favouriteChecker(id: String): Int {
+    PlayerActivity.isFavourite = false
+    FavouriteActivity.favouriteSongs.forEachIndexed { index, musicData ->
+        if (musicData.id == id) {
+            PlayerActivity.isFavourite = true
+            return index
+        }
+    }
+    return -1
 }

@@ -5,6 +5,8 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.CHANGE_AUDIO_SETTINGS" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO"/>
+    <uses-permission android:name="android.permission.INTERNET"/>
 
     <application
         android:name=".MyNotification"
@@ -24,7 +26,7 @@
             android:theme="@style/Base.Theme.MyApp"
             tools:ignore="LockedOrientationActivity" />
         <activity
-            android:name=".FavouiteActivity"
+            android:name=".FavouriteActivity"
             android:exported="false"
             android:screenOrientation="portrait"
             android:theme="@style/Base.Theme.MyApp"

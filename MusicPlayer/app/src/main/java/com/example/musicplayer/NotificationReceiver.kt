@@ -16,7 +16,6 @@ class NotificationReceiver : BroadcastReceiver() {
               exitApplication()
             }
         }
-
     }
 
     private fun preNextSong(increment: Boolean, context: Context) {
@@ -31,6 +30,19 @@ class NotificationReceiver : BroadcastReceiver() {
             .into(PlayerActivity.binding.musicIcon)
 
         PlayerActivity.binding.songTitle.text = PlayerActivity.MusicListPA[PlayerActivity.songPosition].title
+
+        Glide
+            .with(context)
+            .load(PlayerActivity.MusicListPA[PlayerActivity.songPosition].artUrl)
+            .centerCrop()
+            .placeholder(R.drawable.musical_player).centerCrop()
+            .into(NowPlaying.binding.songImgNp)
+        NowPlaying.binding.songNameNp.text = PlayerActivity.MusicListPA[PlayerActivity.songPosition].title
+
+        PlayerActivity.fIndex = favouriteChecker(PlayerActivity.MusicListPA[PlayerActivity.songPosition].id)
+        if (PlayerActivity.isFavourite)
+            PlayerActivity.binding.favIcon.setImageResource(R.drawable.ic_favorite)
+        else PlayerActivity.binding.favIcon.setImageResource(R.drawable.ic_favorite_border)
 
     }
 }

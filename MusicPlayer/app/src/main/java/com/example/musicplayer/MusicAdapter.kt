@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.musicplayer.databinding.MusicViewBinding
 
-class MusicAdapter(private val context: Context, private val musicList: ArrayList<MusicData>) :
+class MusicAdapter(private val context: Context, private var musicList: ArrayList<MusicData>) :
     RecyclerView.Adapter<MusicAdapter.MyViewHolder>() {
     class MyViewHolder(binding: MusicViewBinding) : RecyclerView.ViewHolder(binding.root) {
         val title = binding.songName
@@ -29,7 +29,7 @@ class MusicAdapter(private val context: Context, private val musicList: ArrayLis
     }
 
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
-     holder.title.text = musicList[position].title
+        holder.title.text = musicList[position].title
         holder.album.text = musicList[position].album
         holder.duration.text = formatDuration(musicList[position].duration)
         Glide
@@ -40,11 +40,23 @@ class MusicAdapter(private val context: Context, private val musicList: ArrayLis
             .into(holder.image)
 
         holder.root.setOnClickListener {
-            val intent = Intent(context,PlayerActivity::class.java)
-            intent.putExtra("Index",position)
-            intent.putExtra("class","MusicAdapter")
-            ContextCompat.startActivity(context,intent,null)
+            when{
+                MainActivity.search -> sendIntent("MusicAdapterSearch",position)
+                else -> sendIntent("MusicAdapter", position)
+            }
         }
     }
 
+    fun updateMusicList(searchList: ArrayList<MusicData>) {
+        musicList = ArrayList()
+        musicList.addAll(searchList)
+        notifyDataSetChanged()
+    }
+
+    private fun sendIntent(ref: String, position: Int) {
+        val intent = Intent(context, PlayerActivity::class.java)
+        intent.putExtra("Index", position)
+        intent.putExtra("class", ref)
+        ContextCompat.startActivity(context, intent, null)
+    }
 }

@@ -196,8 +196,17 @@ class PlayerActivity : AppCompatActivity(), ServiceConnection {
                 setLayout(this)
 
             }
+
+            "FavouriteShuffle" -> {
+                val intent = Intent(this, MusicService::class.java)
+                bindService(intent, this, BIND_AUTO_CREATE)
+                startService(intent)
+                MusicListPA = ArrayList()
+                MusicListPA = ArrayList(FavouriteActivity.favouriteSongs)
+                MusicListPA.shuffle()
+                setLayout(this)
+            }
         }
-//        lineVisualization()
     }
 
     private fun preNextSong(increment: Boolean) {

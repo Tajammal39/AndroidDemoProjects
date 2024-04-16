@@ -50,4 +50,5 @@ dependencies {
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
     implementation("com.github.bumptech.glide:glide:4.16.0")
     implementation ("com.google.code.gson:gson:2.10.1")
+    implementation("io.github.gautamchibde:audiovisualizer:2.2.5")
 }

@@ -6,20 +6,20 @@ import android.content.Intent
 import android.content.ServiceConnection
 import android.media.audiofx.AudioEffect
 import android.net.Uri
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.os.IBinder
 import android.os.Looper
 import android.util.Log
+import android.view.View
 import android.widget.SeekBar
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import com.example.musicplayer.databinding.ActivityPlayerBinding
 import com.google.android.material.bottomsheet.BottomSheetDialog
-import kotlin.system.exitProcess
 
 @Suppress("DEPRECATION")
 class PlayerActivity : AppCompatActivity(), ServiceConnection {
@@ -46,16 +46,16 @@ class PlayerActivity : AppCompatActivity(), ServiceConnection {
         super.onCreate(savedInstanceState)
         binding = ActivityPlayerBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
         initializeLayout()
-
         binding.playPauseBtn.setOnClickListener {
             if (isPlaying) pauseMusic() else playMusic()
+//            lineVisualization()/
         }
 
         binding.nextIcon.setOnClickListener {
             preNextSong(true)
         }
+
         binding.previousIcon.setOnClickListener {
             preNextSong(false)
         }
@@ -161,7 +161,6 @@ class PlayerActivity : AppCompatActivity(), ServiceConnection {
                 val intent = Intent(this, MusicService::class.java)
                 bindService(intent, this, BIND_AUTO_CREATE)
                 startService(intent)
-
                 MusicListPA = ArrayList()
                 MusicListPA = ArrayList(MainActivity.musicSearchList)
                 setLayout(this)
@@ -198,12 +197,14 @@ class PlayerActivity : AppCompatActivity(), ServiceConnection {
 
             }
         }
+//        lineVisualization()
     }
 
     private fun preNextSong(increment: Boolean) {
         setSongPosition(increment)
         setLayout(this)
         createMediaPlayer(MusicListPA[songPosition])
+        lineVisualization()
     }
 
     override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
@@ -211,6 +212,7 @@ class PlayerActivity : AppCompatActivity(), ServiceConnection {
         musicService = binder.currentService()
         createMediaPlayer(MusicListPA[songPosition])
         seekBarSetup()
+        lineVisualization()
     }
 
     override fun onServiceDisconnected(name: ComponentName?) {
@@ -277,4 +279,22 @@ class PlayerActivity : AppCompatActivity(), ServiceConnection {
             dialog.dismiss()
         }
     }
+
+    private fun lineVisualization() {
+        if (musicService != null && musicService!!.mediaPlayer != null) {
+            val lineVisualizer = binding.visualizerLine
+            lineVisualizer.visibility = View.VISIBLE
+            // Set a custom color to the line
+            lineVisualizer.setColor(ContextCompat.getColor(this, R.color.cool_pink))
+            lineVisualizer.setRadiusMultiplier(2.2f)
+            lineVisualizer.setStrokeWidth(2)
+
+            // Setting the media player to the visualizer
+            lineVisualizer.setPlayer(musicService!!.mediaPlayer!!.audioSessionId)
+        } else {
+            // Handle the case when musicService or mediaPlayer is null
+            Log.e("PlayerActivity11", "musicService or mediaPlayer is null")
+        }
+    }
+
 }

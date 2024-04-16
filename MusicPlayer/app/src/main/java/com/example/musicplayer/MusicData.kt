@@ -1,18 +1,17 @@
 package com.example.musicplayer
+
 import android.content.Context
-import android.content.Intent
 import android.media.MediaMetadataRetriever
 import android.media.MediaPlayer
-import android.net.Uri
-import android.os.Bundle
-import android.speech.RecognitionListener
-import android.speech.RecognizerIntent
-import android.speech.SpeechRecognizer
 import android.util.Log
+import android.view.View
+import android.widget.Toast
+import androidx.core.content.ContextCompat
 import com.bumptech.glide.Glide
-import java.util.Locale
 import java.util.concurrent.TimeUnit
 import kotlin.system.exitProcess
+import com.example.musicplayer.PlayerActivity.Companion as PlayerActivity
+
 data class MusicData(
     val id: String,
     val title: String,
@@ -27,7 +26,6 @@ data class MusicData(
         val currentMusic = PlayerActivity.MusicListPA[PlayerActivity.songPosition]
         createMediaPlayer(currentMusic)
         setLayout(PlayerActivity.binding.root.context)
-
     }
 }
 
@@ -47,7 +45,8 @@ fun getImageArt(path: String): ByteArray? {
 }
 
 fun setLayout(content: Context) {
-    PlayerActivity.fIndex = favouriteChecker(PlayerActivity.MusicListPA[PlayerActivity.songPosition].id)
+    PlayerActivity.fIndex =
+        favouriteChecker(PlayerActivity.MusicListPA[PlayerActivity.songPosition].id)
     Glide
         .with(content)
         .load(PlayerActivity.MusicListPA[PlayerActivity.songPosition].artUrl)
@@ -60,6 +59,8 @@ fun setLayout(content: Context) {
     if (PlayerActivity.isFavourite)
         PlayerActivity.binding.favIcon.setImageResource(R.drawable.ic_favorite)
     else PlayerActivity.binding.favIcon.setImageResource(R.drawable.ic_favorite_border)
+
+//    lineVisualization(content)
 }
 
 fun createMediaPlayer(musicData: MusicData) {
@@ -70,7 +71,6 @@ fun createMediaPlayer(musicData: MusicData) {
         PlayerActivity.musicService!!.mediaPlayer?.setDataSource(PlayerActivity.MusicListPA[PlayerActivity.songPosition].path)
         PlayerActivity.musicService!!.mediaPlayer?.prepare()
         PlayerActivity.musicService!!.mediaPlayer?.start()
-
         PlayerActivity.isPlaying = true
         PlayerActivity.binding.playPauseBtn.setIconResource(R.drawable.ic_pause)
         PlayerActivity.musicService!!.showNotification(R.drawable.ic_pause)
@@ -81,12 +81,24 @@ fun createMediaPlayer(musicData: MusicData) {
         PlayerActivity.binding.seekBar.progress = 0
         PlayerActivity.binding.seekBar.max = PlayerActivity.musicService!!.mediaPlayer!!.duration
         PlayerActivity.musicService!!.mediaPlayer!!.setOnCompletionListener(musicData)
-
     } catch (e: Exception) {
         return
     }
 }
 
+/*fun lineVisualization(content: Context) {
+    Log.i("lineVisualization","Visualizer start")
+    Toast.makeText(content,"Visulazoer setup",Toast.LENGTH_SHORT).show()
+    val lineVisualizer = PlayerActivity.binding.visualizerLine
+        lineVisualizer.visibility = View.VISIBLE
+    // Set a custom color to the line
+    lineVisualizer.setColor(ContextCompat.getColor(content, R.color.black))
+
+    lineVisualizer.setStrokeWidth(1)
+
+    // Setting the media player to the visualizer
+    lineVisualizer.setPlayer(PlayerActivity.musicService!!.mediaPlayer!!.audioSessionId)
+}*/
 fun playMusic() {
     PlayerActivity.binding.playPauseBtn.setIconResource(R.drawable.ic_pause)
     PlayerActivity.musicService!!.showNotification(R.drawable.ic_pause)
@@ -122,6 +134,7 @@ fun exitApplication() {
     PlayerActivity.musicService = null
     exitProcess(1)
 }
+
 fun favouriteChecker(id: String): Int {
     PlayerActivity.isFavourite = false
     FavouriteActivity.favouriteSongs.forEachIndexed { index, musicData ->

@@ -24,7 +24,6 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 @Suppress("DEPRECATION")
 class PlayerActivity : AppCompatActivity(), ServiceConnection {
     private lateinit var runnable: Runnable
-
     companion object {
         var isPlaying: Boolean = false
         var musicService: MusicService? = null

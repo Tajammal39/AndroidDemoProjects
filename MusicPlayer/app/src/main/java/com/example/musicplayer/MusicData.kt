@@ -3,10 +3,6 @@ package com.example.musicplayer
 import android.content.Context
 import android.media.MediaMetadataRetriever
 import android.media.MediaPlayer
-import android.util.Log
-import android.view.View
-import android.widget.Toast
-import androidx.core.content.ContextCompat
 import com.bumptech.glide.Glide
 import java.util.concurrent.TimeUnit
 import kotlin.system.exitProcess
@@ -29,6 +25,16 @@ data class MusicData(
     }
 }
 
+class Playlist {
+    lateinit var name: String
+    lateinit var playlist: ArrayList<MusicData>
+    lateinit var createdBy: String
+    lateinit var createdOn:String
+}
+
+class MusicPlayerList{
+    var ref:ArrayList<Playlist> = ArrayList()
+}
 fun formatDuration(duration: Long): String {
     val minutes = TimeUnit.MINUTES.convert(duration, TimeUnit.MILLISECONDS)
     val seconds = TimeUnit.SECONDS.convert(

@@ -29,7 +29,7 @@
         android:textSize="18sp" />
 
     <ImageButton
-        android:id="@+id/playlistDelete"
+        android:id="@+id/playlistDeleteBtn"
         android:layout_width="35dp"
         android:layout_height="35dp"
         android:layout_marginStart="130dp"

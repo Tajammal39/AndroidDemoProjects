@@ -14,7 +14,6 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import java.text.SimpleDateFormat
 import java.util.Locale
 
-
 class PlaylistActivity : AppCompatActivity() {
     private lateinit var binding: ActivityPlaylistBinding
     private lateinit var playlistAdapterView: PlaylistAdapterView

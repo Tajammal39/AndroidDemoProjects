@@ -61,12 +61,14 @@
             android:src="@drawable/musicplayer_icon_splash_screen" />
 
         <TextView
+            android:id="@+id/moreInfoPD"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginHorizontal="5dp"
-            android:background="@color/cool_pink"
+            android:background="@color/white"
             android:gravity="center|start"
             android:text="PlayList Name"
+            android:singleLine="true"
             android:textColor="@color/white"
             android:textSize="16sp" />
 
@@ -101,7 +103,8 @@
         app:layout_constraintVertical_bias="0.9"
         app:shapeAppearanceOverlay="@style/curveButton"
         app:strokeColor="@color/cool_pink"
-        app:strokeWidth="2dp" />
+        app:strokeWidth="2dp"
+        android:visibility="invisible"/>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/optionsList"
@@ -148,6 +151,4 @@
             app:layout_constraintTop_toTopOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
-
-
 </androidx.constraintlayout.widget.ConstraintLayout>

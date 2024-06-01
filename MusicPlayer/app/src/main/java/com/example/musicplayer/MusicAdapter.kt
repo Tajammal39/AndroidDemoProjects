@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.musicplayer.databinding.MusicViewBinding
 
-class MusicAdapter(private val context: Context, private var musicList: ArrayList<MusicData>) :
+class MusicAdapter(private val context: Context, private var musicList: ArrayList<MusicData>, private var playlistDetail: Boolean = false) :
     RecyclerView.Adapter<MusicAdapter.MyViewHolder>() {
     class MyViewHolder(binding: MusicViewBinding) : RecyclerView.ViewHolder(binding.root) {
         val title = binding.songName

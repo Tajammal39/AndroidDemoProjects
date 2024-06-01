@@ -205,6 +205,16 @@ class PlayerActivity : AppCompatActivity(), ServiceConnection {
                 MusicListPA.shuffle()
                 setLayout(this)
             }
+
+            "PlaylistDetailsAdapter" ->{
+                val intent = Intent(this, MusicService::class.java)
+                bindService(intent, this, BIND_AUTO_CREATE)
+                startService(intent)
+                MusicListPA = ArrayList()
+                MusicListPA = ArrayList(PlaylistActivity.musicPlaylist.ref[PlaylistDetail.currentPlaylistPosition].playlist)
+                setLayout(this)
+
+            }
         }
     }
 

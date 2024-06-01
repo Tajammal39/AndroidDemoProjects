@@ -28,16 +28,20 @@ class PlaylistDetail : AppCompatActivity() {
 
         currentPlaylistPosition = intent.getIntExtra("index", -1)
 
-        PlaylistActivity.musicPlaylist.ref[currentPlaylistPosition].playlist.addAll(MainActivity.MusicListMA)
 //        currentPlaylistPosition = intent.extras?.get("index") as Int
         binding.playlistDetailRv.setItemViewCacheSize(10)
         binding.playlistDetailRv.setHasFixedSize(true)
+        PlaylistActivity.musicPlaylist.ref[currentPlaylistPosition].playlist.addAll(MainActivity.MusicListMA)
+        PlaylistActivity.musicPlaylist.ref[currentPlaylistPosition].playlist.shuffle()
+
         adpater = MusicAdapter(
             this,
             PlaylistActivity.musicPlaylist.ref[currentPlaylistPosition].playlist,
             playlistDetail = true
         )
-        binding.playlistDetailRv.adapter
+        binding.playlistDetailRv.adapter = adpater
+
+        binding.backBtnPd.setOnClickListener { finish() }
     }
 
     @SuppressLint("SetTextI18n")

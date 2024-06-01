@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.appcompat.app.AlertDialog
 
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.example.musicplayer.databinding.PlaylistViewBinding
 
 class PlaylistAdapterView(private val context: Context, private var playListList: ArrayList<Playlist>) :
@@ -58,6 +59,16 @@ class PlaylistAdapterView(private val context: Context, private var playListList
             context.startActivity(Intent(context,PlaylistDetail::class.java)
                 .putExtra("index",position))
         }
+
+        if (PlaylistActivity.musicPlaylist.ref[position].playlist.size > 0){
+            Glide
+                .with(context)
+                .load(PlaylistActivity.musicPlaylist.ref[PlaylistDetail.currentPlaylistPosition].playlist[0].artUrl)
+                .centerCrop()
+                .placeholder(R.drawable.musical_player).centerCrop()
+                .into(holder.image)
+        }
+
 
     }
 

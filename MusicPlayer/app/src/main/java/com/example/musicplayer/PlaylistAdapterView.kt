@@ -33,7 +33,7 @@ class PlaylistAdapterView(private val context: Context, private var playListList
         return playListList.size
     }
 
-    override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
+   /* override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
         holder.name.text = playListList[position].name
         holder.name.isSelected = true
         holder.delete.setOnClickListener {
@@ -70,6 +70,42 @@ class PlaylistAdapterView(private val context: Context, private var playListList
         }
 
 
+    }
+*/
+
+    override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
+        if (position >= 0 && position < playListList.size) {
+            holder.name.text = playListList[position].name
+            holder.name.isSelected = true
+            holder.delete.setOnClickListener {
+                val builder = AlertDialog.Builder(context)
+                    .setTitle(playListList[position].name)
+                    .setMessage("Do You Want to delete playlist?")
+                builder.setPositiveButton("Yes") { dialog, _ ->
+                    PlaylistActivity.musicPlaylist.ref.removeAt(position)
+                    refreshPlaylist()
+                    dialog.dismiss()
+                }
+                builder.setNegativeButton("No") { dialog, _ ->
+                    dialog.dismiss()
+                }
+                builder.show()
+            }
+
+            holder.root.setOnClickListener {
+                context.startActivity(Intent(context, PlaylistDetail::class.java)
+                    .putExtra("index", position))
+            }
+
+            if (PlaylistActivity.musicPlaylist.ref[position].playlist.size > 0) {
+                Glide
+                    .with(context)
+                    .load(PlaylistActivity.musicPlaylist.ref[position].playlist[0].artUrl)
+                    .centerCrop()
+                    .placeholder(R.drawable.musical_player)
+                    .into(holder.image)
+            }
+        }
     }
 
     fun refreshPlaylist(){

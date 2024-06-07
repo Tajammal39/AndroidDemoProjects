@@ -12,6 +12,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.bumptech.glide.Glide
 import com.example.musicplayer.databinding.ActivityPlaylistDetailBinding
+import com.google.gson.GsonBuilder
 
 @Suppress("DEPRECATION")
 class PlaylistDetail : AppCompatActivity() {
@@ -91,5 +92,12 @@ class PlaylistDetail : AppCompatActivity() {
             binding.shuffleBtnPd.visibility = View.VISIBLE
         }
         adpater.notifyDataSetChanged()
+
+
+        val editor = getSharedPreferences("Fav", MODE_PRIVATE).edit()
+               val jasonStringPlaylist = GsonBuilder().create().toJson(PlaylistActivity.musicPlaylist)
+        editor.putString("PlaylistSong", jasonStringPlaylist)
+
+        editor.apply()
     }
 }

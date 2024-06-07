@@ -56,6 +56,14 @@ class MainActivity : AppCompatActivity() {
                 val data: ArrayList<MusicData> = GsonBuilder().create().fromJson(jasonString, typeToken)
                 FavouriteActivity.favouriteSongs.addAll(data)
             }
+
+          PlaylistActivity.musicPlaylist = MusicPlayerList()
+            val jasonStringPlaylist = editor.getString("PlaylistSong", null)
+
+            if (jasonStringPlaylist != null) {
+                val dataPlayList: MusicPlayerList = GsonBuilder().create().fromJson(jasonStringPlaylist,MusicPlayerList::class.java)
+              PlaylistActivity.musicPlaylist = dataPlayList
+            }
         }
 
         viewBinding.shufflcon.setOnClickListener {
@@ -80,6 +88,10 @@ class MainActivity : AppCompatActivity() {
         val editor = getSharedPreferences("Fav", MODE_PRIVATE).edit()
         val jasonString = GsonBuilder().create().toJson(FavouriteActivity.favouriteSongs)
         editor.putString("FavouriteSong", jasonString)
+
+        val jasonStringPlaylist = GsonBuilder().create().toJson(PlaylistActivity.musicPlaylist)
+        editor.putString("PlaylistSong", jasonStringPlaylist)
+
         editor.apply()
     }
 

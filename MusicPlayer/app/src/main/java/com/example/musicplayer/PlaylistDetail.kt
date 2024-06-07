@@ -1,10 +1,12 @@
 package com.example.musicplayer
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -28,11 +30,9 @@ class PlaylistDetail : AppCompatActivity() {
 
         currentPlaylistPosition = intent.getIntExtra("index", -1)
 
-//        currentPlaylistPosition = intent.extras?.get("index") as Int
-        binding.playlistDetailRv.setItemViewCacheSize(10)
+         binding.playlistDetailRv.setItemViewCacheSize(10)
         binding.playlistDetailRv.setHasFixedSize(true)
-        PlaylistActivity.musicPlaylist.ref[currentPlaylistPosition].playlist.addAll(MainActivity.MusicListMA)
-        PlaylistActivity.musicPlaylist.ref[currentPlaylistPosition].playlist.shuffle()
+       
 
         adpater = MusicAdapter(
             this,
@@ -42,6 +42,33 @@ class PlaylistDetail : AppCompatActivity() {
         binding.playlistDetailRv.adapter = adpater
 
         binding.backBtnPd.setOnClickListener { finish() }
+
+        binding.shuffleBtnPd.setOnClickListener {
+            startActivity(
+                Intent(this, PlayerActivity::class.java).putExtra(
+                    "Index", 0
+                ).putExtra("class", "PlaylistDetailsShuffle")
+            )
+        }
+
+        binding.addBtnPd.setOnClickListener {
+            startActivity(Intent(this, SelectionActivity::class.java))
+        }
+
+        binding.removeAllPd.setOnClickListener {   val builder = AlertDialog.Builder(this)
+            .setTitle("Remove")
+            .setMessage("Do You Want to remove all songs from platlist?")
+            //builder.setPositiveButton("OK", DialogInterface.OnClickListener(function = x))
+
+            builder.setPositiveButton("Yes") { _, _ ->
+               PlaylistActivity.musicPlaylist.ref[currentPlaylistPosition].playlist.clear()
+                adpater.refreshPlaylist()
+            }
+
+            builder.setNegativeButton("No") { dialog, _ ->
+                dialog.dismiss()
+            }
+            builder.show() }
     }
 
     @SuppressLint("SetTextI18n")
@@ -63,5 +90,6 @@ class PlaylistDetail : AppCompatActivity() {
 
             binding.shuffleBtnPd.visibility = View.VISIBLE
         }
+        adpater.notifyDataSetChanged()
     }
 }

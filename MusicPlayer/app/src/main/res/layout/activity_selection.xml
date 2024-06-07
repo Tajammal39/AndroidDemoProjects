@@ -2,48 +2,47 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".FavouriteActivity">
+    tools:context=".SelectionActivity">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/favBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/cool_pink"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
         <ImageButton
-            android:id="@+id/favBackIcon"
+            android:id="@+id/selectionBackIcon"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="50dp"
             android:backgroundTint="@android:color/transparent"
             android:src="@drawable/ic_back"
+            app:layout_constraintEnd_toStartOf="@id/searchSelectionSA"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@id/favText"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:tint="@color/white" />
+            app:tint="@color/black" />
 
-        <TextView
-            android:id="@+id/favText"
+        <androidx.appcompat.widget.SearchView
+            android:id="@+id/searchSelectionSA"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:text="Favourites"
-            android:textAlignment="center"
-            android:textColor="@color/white"
-            android:textSize="25sp"
-            android:textStyle="bold"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_height="50dp"
+            app:queryHint="Search Song"
+            android:hint="Search"
+            app:iconifiedByDefault="false"
             app:layout_constraintStart_toEndOf="@id/favBackIcon"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/favRv"
+        android:id="@+id/selectionRv"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:scrollbarThumbVertical="@drawable/scroll_bar_icon"
@@ -52,25 +51,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/favBar"
-        app:spanCount="4"
         tools:listitem="@layout/favourite_view" />
-
-    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
-        android:id="@+id/favShuffleBtn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:backgroundTint="@color/white"
-        app:icon="@drawable/ic_shuffle"
-        app:iconSize="35dp"
-        app:iconTint="@color/cool_pink"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.9"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.9"
-        app:shapeAppearanceOverlay="@style/curveButton"
-        app:strokeColor="@color/cool_pink"
-        app:strokeWidth="2dp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

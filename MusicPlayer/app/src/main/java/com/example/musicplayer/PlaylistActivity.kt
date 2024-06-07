@@ -81,4 +81,9 @@ class PlaylistActivity : AppCompatActivity() {
             playlistAdapterView.refreshPlaylist()
         }
     }
+
+    override fun onResume() {
+        super.onResume()
+        playlistAdapterView.notifyDataSetChanged()
+    }
 }
